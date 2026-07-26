@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Time Premium Calculator | Revenue Department</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi&family=Spectral:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2b39;
+    --paper:#f6f3ec;
+    --paper-2:#eee9dc;
+    --navy:#1b3a5c;
+    --navy-deep:#122840;
+    --gold:#b7791f;
+    --gold-soft:#e7c27d;
+    --green:#2e6f4e;
+    --line:#c9c0aa;
+    --red:#a5372a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(27,58,92,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  header{
+    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fdfbf6;
+    padding:28px 24px 22px;
+    border-bottom:6px solid var(--gold);
+    position:relative;
+  }
+  .header-inner{
+    max-width:880px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+  .emblem{
+    width:52px;height:52px;flex:none;
+    border-radius:50%;
+    border:2px solid var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Spectral',serif;font-weight:700;font-size:20px;
+    color:var(--gold-soft);
+    background:rgba(255,255,255,0.04);
+  }
+  header h1{
+    font-family:'Spectral',serif;
+    font-weight:700;
+    font-size:1.5rem;
+    margin:0 0 2px;
+    letter-spacing:0.2px;
+  }
+  header p{
+    margin:0;
+    font-size:0.85rem;
+    color:#cfd9e4;
+    letter-spacing:0.3px;
+  }
+  main{
+    max-width:880px;
+    margin:0 auto;
+    padding:32px 24px 64px;
+  }
+  .panel{
+    background:#fffdf8;
+    border:1px solid var(--line);
+    border-radius:4px;
+    box-shadow:0 1px 0 rgba(0,0,0,0.03), 0 12px 24px -18px rgba(27,43,57,0.35);
+  }
+  .search-panel{
+    padding:26px 28px 28px;
+    margin-bottom:26px;
+  }
+  .search-panel h2{
+    font-family:'Spectral',serif;
+    font-size:1.05rem;
+    margin:0 0 4px;
+    color:var(--navy-deep);
+  }
+  .search-panel .sub{
+    font-size:0.85rem;
+    color:#5c6672;
+    margin:0 0 20px;
+  }
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:16px;
+  }
+  @media (max-width:560px){ .field-row{grid-template-columns:1fr;} }
+  label{
+    display:block;
+    font-size:0.78rem;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--navy);
+    margin-bottom:6px;
+  }
+  select, input[type="text"]{
+    width:100%;
+    padding:11px 12px;
+    font-size:0.95rem;
+    font-family:'Inter',sans-serif;
+    border:1px solid #b9b2a0;
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+  }
+  select:focus, input:focus{
+    outline:none;
+    border-color:var(--navy);
+    box-shadow:0 0 0 3px rgba(27,58,92,0.12);
+  }
+  .or-divider{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:18px 0;
+    color:#8b8a7c;
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+  }
+  .or-divider::before, .or-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--navy);
+    color:#fdfbf6;
+    border:none;
+    padding:12px 22px;
+    font-size:0.9rem;
+    font-weight:600;
+    border-radius:3px;
+    cursor:pointer;
+    letter-spacing:0.02em;
+  }
+  .btn:hover{background:var(--navy-deep);}
+  .btn:disabled{background:#9aa4ad;cursor:not-allowed;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--navy);
+    border:1px solid var(--navy);
+  }
+  .btn-ghost:hover{background:rgba(27,58,92,0.06);}
+
+  #status-msg{
+    margin-top:14px;
+    font-size:0.88rem;
+    color:var(--red);
+    display:none;
+  }
+
+  /* Result / receipt card */
+  #result{
+    display:none;
+  }
+  .receipt{
+    padding:0;
+    overflow:hidden;
+  }
+  .receipt-head{
+    background:var(--paper-2);
+    padding:20px 28px;
+    border-bottom:1px dashed var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+  }
+  .receipt-head h3{
+    font-family:'Spectral',serif;
+    font-size:1.15rem;
+    margin:0 0 4px;
+    color:var(--navy-deep);
+  }
+  .receipt-head .village-tag{
+    font-size:0.82rem;
+    color:#5c6672;
+  }
+  .seal{
+    width:64px;height:64px;flex:none;
+    border-radius:50%;
+    border:2.5px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;
+    font-family:'Spectral',serif;
+    font-size:0.62rem;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:0.03em;
+    line-height:1.15;
+    transform:rotate(-8deg);
+    background:rgba(183,121,31,0.05);
+  }
+  .receipt-body{
+    padding:22px 28px 8px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px 24px;
+  }
+  @media (max-width:560px){ .receipt-body{grid-template-columns:1fr;} }
+  .data-item .dl{
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:#847e6d;
+    margin-bottom:3px;
+  }
+  .data-item .dv{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.05rem;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .formula-strip{
+    margin:18px 28px 0;
+    padding:12px 16px;
+    background:rgba(27,58,92,0.045);
+    border-left:3px solid var(--navy);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85rem;
+    color:var(--navy-deep);
+    border-radius:0 3px 3px 0;
+  }
+  .total-strip{
+    margin:20px 28px 26px;
+    padding:20px 22px;
+    background:var(--navy-deep);
+    border-radius:4px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .total-strip .tl{
+    color:#cfd9e4;
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  .total-strip .amt{
+    font-family:'Spectral',serif;
+    font-weight:700;
+    font-size:2rem;
+    color:#fff;
+  }
+  .total-strip .amt .rs{
+    font-size:1.15rem;
+    color:var(--gold-soft);
+    margin-right:4px;
+  }
+  .mismatch-note{
+    margin:0 28px 20px;
+    padding:10px 14px;
+    background:#fbeeea;
+    border:1px solid #e3c3ba;
+    color:var(--red);
+    font-size:0.8rem;
+    border-radius:3px;
+  }
+  .actions-row{
+    padding:0 28px 24px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  #not-found{
+    display:none;
+    padding:28px;
+    text-align:center;
+    color:#5c6672;
+  }
+  #not-found strong{color:var(--navy-deep);}
+
+  footer{
+    max-width:880px;
+    margin:0 auto;
+    padding:0 24px 40px;
+    font-size:0.78rem;
+    color:#8b8a7c;
+    text-align:center;
+  }
+
+  @media print{
+    header, .search-panel, .actions-row, footer{display:none !important;}
+    body{background:#fff;}
+    .panel{box-shadow:none;border:1px solid #999;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="emblem">रा</div>
+    <div>
+      <h1>One Time Premium Calculator</h1>
+      <p>Revenue Department &middot; Village-wise Survey Number Rate Search</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="panel search-panel">
+    <h2>Find the payable amount</h2>
+    <p class="sub">Select the village and survey number, or type the survey number directly if you know it.</p>
+
+    <div class="field-row">
+      <div>
+        <label for="villageSelect">Village Name</label>
+        <select id="villageSelect">
+          <option value="">— Select village —</option>
+        </select>
+      </div>
+      <div>
+        <label for="surveySelect">Survey No.</label>
+        <select id="surveySelect" disabled>
+          <option value="">— Select village first —</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="or-divider">or search directly</div>
+
+    <div class="field-row" style="grid-template-columns: 1fr auto;">
+      <div>
+        <label for="freeSearch">Survey No. / Village (type-ahead)</label>
+        <input type="text" id="freeSearch" list="allEntries" placeholder="e.g. 100/1 or Chanda Rai" autocomplete="off">
+        <datalist id="allEntries"></datalist>
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn" id="searchBtn">Search</button>
+      </div>
+    </div>
+
+    <div id="status-msg"></div>
+  </section>
+
+  <section class="panel receipt" id="result">
+    <div class="receipt-head">
+      <div>
+        <h3 id="rVillage">—</h3>
+        <div class="village-tag">Survey No. <span id="rSurvey">—</span></div>
+      </div>
+      <div class="seal">OFFICIAL<br>RECORD</div>
+    </div>
+    <div class="receipt-body">
+      <div class="data-item">
+        <div class="dl">Area</div>
+        <div class="dv" id="rArea">—</div>
+      </div>
+      <div class="data-item">
+        <div class="dl">Applicable Rate</div>
+        <div class="dv" id="rRate">—</div>
+      </div>
+    </div>
+    <div class="formula-strip" id="rFormula">Payable Amount = Area (Sq m) × Rate ÷ 1000</div>
+    <div id="mismatchNote" class="mismatch-note" style="display:none;"></div>
+    <div class="total-strip">
+      <div class="tl">Payable One Time Premium Amount</div>
+      <div class="amt"><span class="rs">Rs.</span><span id="rAmount">0</span></div>
+    </div>
+    <div class="actions-row">
+      <button class="btn btn-ghost" onclick="window.print()">Print / Save Record</button>
+      <button class="btn btn-ghost" id="clearBtn">New Search</button>
+    </div>
+  </section>
+
+  <section class="panel" id="not-found">
+    <p>No record found for <strong id="nfQuery"></strong>. Please check the village name and survey number, or contact the record-keeping section if the survey number was recently added.</p>
+  </section>
+
+  <p style="font-size:0.8rem;color:#8b8a7c;margin-top:18px;">
+    Records loaded: <strong id="recordCount">0</strong> &middot; Data as per office rate register.
+  </p>
+</main>
+
+<footer>
+  For internal office use. To update rates or add new villages/survey numbers, please provide the updated rate register.
+</footer>
+
+<script>
+// ---- Embedded rate data (from office rate register) ----
+// To update: replace this array with the new records (Village, Survey No., Area, Rate).
+// Payable Amount is computed live as Area × Rate ÷ 1000, and cross-checked against
+// the register's own figure if provided.
+const RATE_DATA = [
+  {village:"Chanda Rai",      survey:"100/1",  area:120, rate:5000, registerAmount:600},
+  {village:"Chanda Rai",      survey:"99/2",   area:160, rate:3400, registerAmount:544},
+  {village:"Govindpur Rith",  survey:"51/3",   area:150, rate:4500, registerAmount:675},
+  {village:"Bor Rith",        survey:"34/1/1", area:200, rate:5600, registerAmount:1120},
+  {village:"Durgapur",        survey:"23",     area:300, rate:7000, registerAmount:2100},
+];
+
+const villageSelect = document.getElementById('villageSelect');
+const surveySelect = document.getElementById('surveySelect');
+const freeSearch = document.getElementById('freeSearch');
+const allEntries = document.getElementById('allEntries');
+const statusMsg = document.getElementById('status-msg');
+const resultEl = document.getElementById('result');
+const notFoundEl = document.getElementById('not-found');
+const recordCountEl = document.getElementById('recordCount');
+
+function computeAmount(area, rate){
+  // Formula derived from the register: Payable Amount = Area × Rate / 1000
+  return Math.round((area * rate / 1000) * 100) / 100;
+}
+
+function init(){
+  recordCountEl.textContent = RATE_DATA.length;
+
+  const villages = [...new Set(RATE_DATA.map(r => r.village))].sort();
+  villages.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = v;
+    villageSelect.appendChild(opt);
+  });
+
+  RATE_DATA.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = `${r.survey} — ${r.village}`;
+    allEntries.appendChild(opt);
+  });
+}
+
+villageSelect.addEventListener('change', () => {
+  const v = villageSelect.value;
+  surveySelect.innerHTML = '';
+  if(!v){
+    surveySelect.disabled = true;
+    surveySelect.innerHTML = '<option value="">— Select village first —</option>';
+    return;
+  }
+  surveySelect.disabled = false;
+  const opt0 = document.createElement('option');
+  opt0.value = ''; opt0.textContent = '— Select survey no. —';
+  surveySelect.appendChild(opt0);
+
+  RATE_DATA.filter(r => r.village === v).forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.survey; opt.textContent = r.survey;
+    surveySelect.appendChild(opt);
+  });
+});
+
+surveySelect.addEventListener('change', () => {
+  if(villageSelect.value && surveySelect.value){
+    showRecord(villageSelect.value, surveySelect.value);
+  }
+});
+
+document.getElementById('searchBtn').addEventListener('click', () => {
+  const q = freeSearch.value.trim();
+  if(!q){
+    showStatus('Please enter a survey number or village name.');
+    return;
+  }
+  // Try to parse "survey — village" format from the datalist selection
+  let match = null;
+  const parts = q.split('—').map(s => s.trim());
+  if(parts.length === 2){
+    match = RATE_DATA.find(r => r.survey.toLowerCase() === parts[0].toLowerCase() &&
+                                 r.village.toLowerCase() === parts[1].toLowerCase());
+  }
+  if(!match){
+    // fuzzy: match by survey number exact, or village name contains, or survey contains
+    const ql = q.toLowerCase();
+    const bySurvey = RATE_DATA.filter(r => r.survey.toLowerCase() === ql);
+    if(bySurvey.length === 1){
+      match = bySurvey[0];
+    } else if(bySurvey.length > 1){
+      showStatus('Multiple villages share this survey number. Please use the dropdowns above to pick the village.');
+      return;
+    } else {
+      const byVillage = RATE_DATA.filter(r => r.village.toLowerCase().includes(ql));
+      if(byVillage.length === 1){
+        match = byVillage[0];
+      }
+    }
+  }
+  if(match){
+    showRecord(match.village, match.survey);
+  } else {
+    showNotFound(q);
+  }
+});
+
+freeSearch.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    document.getElementById('searchBtn').click();
+  }
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  resultEl.style.display = 'none';
+  notFoundEl.style.display = 'none';
+  statusMsg.style.display = 'none';
+  villageSelect.value = '';
+  surveySelect.innerHTML = '<option value="">— Select village first —</option>';
+  surveySelect.disabled = true;
+  freeSearch.value = '';
+  freeSearch.focus();
+});
+
+function showStatus(msg){
+  statusMsg.textContent = msg;
+  statusMsg.style.display = 'block';
+  resultEl.style.display = 'none';
+  notFoundEl.style.display = 'none';
+}
+
+function showNotFound(q){
+  document.getElementById('nfQuery').textContent = q;
+  notFoundEl.style.display = 'block';
+  resultEl.style.display = 'none';
+  statusMsg.style.display = 'none';
+}
+
+function showRecord(village, survey){
+  const rec = RATE_DATA.find(r => r.village === village && r.survey === survey);
+  if(!rec){ showNotFound(`${survey} — ${village}`); return; }
+
+  statusMsg.style.display = 'none';
+  notFoundEl.style.display = 'none';
+
+  document.getElementById('rVillage').textContent = rec.village;
+  document.getElementById('rSurvey').textContent = rec.survey;
+  document.getElementById('rArea').textContent = `${rec.area} Sq m`;
+  document.getElementById('rRate').textContent = `Rs. ${rec.rate.toLocaleString('en-IN')}`;
+
+  const computed = computeAmount(rec.area, rec.rate);
+  document.getElementById('rAmount').textContent = computed.toLocaleString('en-IN');
+  document.getElementById('rFormula').textContent =
+    `Payable Amount = ${rec.area} (Area) × ${rec.rate} (Rate) ÷ 1000 = Rs. ${computed.toLocaleString('en-IN')}`;
+
+  const mismatchNote = document.getElementById('mismatchNote');
+  if(rec.registerAmount !== undefined && Math.abs(rec.registerAmount - computed) > 0.01){
+    mismatchNote.style.display = 'block';
+    mismatchNote.textContent =
+      `Note: The rate register lists Rs. ${rec.registerAmount.toLocaleString('en-IN')} for this survey number, which differs from the computed value above. Please verify against the original register before issuing this amount.`;
+  } else {
+    mismatchNote.style.display = 'none';
+  }
+
+  resultEl.style.display = 'block';
+  resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+init();
+</script>
+</body>
+</html>

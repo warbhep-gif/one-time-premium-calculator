@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>एकवेळ प्रीमियम कॅल्क्युलेटर | महसूल विभाग</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2b39;
+    --paper:#f6f3ec;
+    --paper-2:#eee9dc;
+    --navy:#1b3a5c;
+    --navy-deep:#122840;
+    --gold:#b7791f;
+    --gold-soft:#e7c27d;
+    --green:#2e6f4e;
+    --line:#c9c0aa;
+    --red:#a5372a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(27,58,92,0.06) 1px, transparent 0);
+    background-size: 22px 22px;
+    color:var(--ink);
+    font-family:'Noto Sans Devanagari','Tiro Devanagari Marathi',sans-serif;
+    min-height:100vh;
+  }
+  header{
+    background:linear-gradient(180deg,var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fdfbf6;
+    padding:28px 24px 22px;
+    border-bottom:6px solid var(--gold);
+    position:relative;
+  }
+  .header-inner{
+    max-width:880px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+  .emblem{
+    width:52px;height:52px;flex:none;
+    border-radius:50%;
+    border:2px solid var(--gold-soft);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Tiro Devanagari Marathi',serif;font-weight:700;font-size:20px;
+    color:var(--gold-soft);
+    background:rgba(255,255,255,0.04);
+  }
+  header h1{
+    font-family:'Tiro Devanagari Marathi',serif;
+    font-weight:700;
+    font-size:1.55rem;
+    margin:0 0 3px;
+    letter-spacing:0.1px;
+  }
+  header p{
+    margin:0;
+    font-size:0.85rem;
+    color:#cfd9e4;
+    letter-spacing:0.1px;
+  }
+  main{
+    max-width:880px;
+    margin:0 auto;
+    padding:32px 24px 64px;
+  }
+  .panel{
+    background:#fffdf8;
+    border:1px solid var(--line);
+    border-radius:4px;
+    box-shadow:0 1px 0 rgba(0,0,0,0.03), 0 12px 24px -18px rgba(27,43,57,0.35);
+  }
+  .search-panel{
+    padding:26px 28px 28px;
+    margin-bottom:26px;
+  }
+  .search-panel h2{
+    font-family:'Tiro Devanagari Marathi',serif;
+    font-size:1.1rem;
+    margin:0 0 4px;
+    color:var(--navy-deep);
+  }
+  .search-panel .sub{
+    font-size:0.85rem;
+    color:#5c6672;
+    margin:0 0 20px;
+  }
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:16px;
+  }
+  @media (max-width:560px){ .field-row{grid-template-columns:1fr;} }
+  label{
+    display:block;
+    font-size:0.8rem;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--navy);
+    margin-bottom:6px;
+  }
+  select, input[type="text"]{
+    width:100%;
+    padding:11px 12px;
+    font-size:0.95rem;
+    font-family:'Noto Sans Devanagari',sans-serif;
+    border:1px solid #b9b2a0;
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+  }
+  select:focus, input:focus{
+    outline:none;
+    border-color:var(--navy);
+    box-shadow:0 0 0 3px rgba(27,58,92,0.12);
+  }
+  .or-divider{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:18px 0;
+    color:#8b8a7c;
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+  }
+  .or-divider::before, .or-divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--navy);
+    color:#fdfbf6;
+    border:none;
+    padding:12px 22px;
+    font-size:0.92rem;
+    font-weight:600;
+    border-radius:3px;
+    cursor:pointer;
+    font-family:'Noto Sans Devanagari',sans-serif;
+  }
+  .btn:hover{background:var(--navy-deep);}
+  .btn:disabled{background:#9aa4ad;cursor:not-allowed;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--navy);
+    border:1px solid var(--navy);
+  }
+  .btn-ghost:hover{background:rgba(27,58,92,0.06);}
+
+  #status-msg{
+    margin-top:14px;
+    font-size:0.88rem;
+    color:var(--red);
+    display:none;
+  }
+
+  #result{
+    display:none;
+  }
+  .receipt{
+    padding:0;
+    overflow:hidden;
+  }
+  .receipt-head{
+    background:var(--paper-2);
+    padding:20px 28px;
+    border-bottom:1px dashed var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+  }
+  .receipt-head h3{
+    font-family:'Tiro Devanagari Marathi',serif;
+    font-size:1.2rem;
+    margin:0 0 4px;
+    color:var(--navy-deep);
+  }
+  .receipt-head .village-tag{
+    font-size:0.85rem;
+    color:#5c6672;
+  }
+  .seal{
+    width:64px;height:64px;flex:none;
+    border-radius:50%;
+    border:2.5px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;
+    font-family:'Tiro Devanagari Marathi',serif;
+    font-size:0.62rem;
+    font-weight:700;
+    color:var(--gold);
+    letter-spacing:0.01em;
+    line-height:1.2;
+    transform:rotate(-8deg);
+    background:rgba(183,121,31,0.05);
+  }
+  .receipt-body{
+    padding:22px 28px 8px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px 24px;
+  }
+  @media (max-width:560px){ .receipt-body{grid-template-columns:1fr;} }
+  .data-item .dl{
+    font-size:0.75rem;
+    color:#847e6d;
+    margin-bottom:3px;
+  }
+  .data-item .dv{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.05rem;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .formula-strip{
+    margin:18px 28px 0;
+    padding:12px 16px;
+    background:rgba(27,58,92,0.045);
+    border-left:3px solid var(--navy);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.83rem;
+    color:var(--navy-deep);
+    border-radius:0 3px 3px 0;
+  }
+  .total-strip{
+    margin:20px 28px 26px;
+    padding:20px 22px;
+    background:var(--navy-deep);
+    border-radius:4px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .total-strip .tl{
+    color:#cfd9e4;
+    font-size:0.82rem;
+    font-family:'Noto Sans Devanagari',sans-serif;
+  }
+  .total-strip .amt{
+    font-family:'Tiro Devanagari Marathi',serif;
+    font-weight:700;
+    font-size:2rem;
+    color:#fff;
+  }
+  .total-strip .amt .rs{
+    font-size:1.15rem;
+    color:var(--gold-soft);
+    margin-right:4px;
+  }
+  .mismatch-note{
+    margin:0 28px 20px;
+    padding:10px 14px;
+    background:#fbeeea;
+    border:1px solid #e3c3ba;
+    color:var(--red);
+    font-size:0.82rem;
+    border-radius:3px;
+  }
+  .actions-row{
+    padding:0 28px 24px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  #not-found{
+    display:none;
+    padding:28px;
+    text-align:center;
+    color:#5c6672;
+  }
+  #not-found strong{color:var(--navy-deep);}
+
+  footer{
+    max-width:880px;
+    margin:0 auto;
+    padding:0 24px 40px;
+    font-size:0.8rem;
+    color:#8b8a7c;
+    text-align:center;
+  }
+
+  .disclaimer{
+    max-width:880px;
+    margin:0 auto;
+    padding:10px 24px 0;
+  }
+  .disclaimer .inner{
+    background:#fbf1de;
+    border:1px solid var(--gold-soft);
+    border-left:4px solid var(--gold);
+    color:#6b4c12;
+    font-size:0.84rem;
+    padding:10px 14px;
+    border-radius:0 3px 3px 0;
+    text-align:center;
+  }
+
+  @media print{
+    header, .search-panel, .actions-row, footer{display:none !important;}
+    body{background:#fff;}
+    .panel{box-shadow:none;border:1px solid #999;}
+    .disclaimer .inner{background:#fff;border:1px solid #999;color:#333;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="emblem">रा</div>
+    <div>
+      <h1>एकवेळ प्रीमियम कॅल्क्युलेटर</h1>
+      <p>महसूल विभाग &middot; गाव निहाय सर्वे नंबर दर शोध</p>
+    </div>
+  </div>
+</header>
+
+<div class="disclaimer"><div class="inner">ही माहिती केवळ माहितीच्या उद्देशाने आहे, कायदेशीर वापरासाठी नाही.</div></div>
+
+<main>
+  <section class="panel search-panel">
+    <h2>देय रक्कम शोधा</h2>
+    <p class="sub">गावाचे नाव आणि सर्वे नंबर निवडा, किंवा सर्वे नंबर माहीत असल्यास थेट टाईप करा.</p>
+
+    <div class="field-row">
+      <div>
+        <label for="villageSelect">गावाचे नाव</label>
+        <select id="villageSelect">
+          <option value="">— गाव निवडा —</option>
+        </select>
+      </div>
+      <div>
+        <label for="surveySelect">सर्वे नं.</label>
+        <select id="surveySelect" disabled>
+          <option value="">— आधी गाव निवडा —</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="or-divider">किंवा थेट शोधा</div>
+
+    <div class="field-row" style="grid-template-columns: 1fr auto;">
+      <div>
+        <label for="freeSearch">सर्वे नं. / गावाचे नाव (टाईप करा)</label>
+        <input type="text" id="freeSearch" list="allEntries" placeholder="उदा. 100/1 किंवा Chanda Rai" autocomplete="off">
+        <datalist id="allEntries"></datalist>
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn" id="searchBtn">शोधा</button>
+      </div>
+    </div>
+
+    <div id="status-msg"></div>
+  </section>
+
+  <section class="panel receipt" id="result">
+    <div class="receipt-head">
+      <div>
+        <h3 id="rVillage">—</h3>
+        <div class="village-tag">सर्वे नं. <span id="rSurvey">—</span></div>
+      </div>
+      <div class="seal">अधिकृत<br>नोंद</div>
+    </div>
+    <div class="receipt-body">
+      <div class="data-item">
+        <div class="dl">क्षेत्रफळ</div>
+        <div class="dv" id="rArea">—</div>
+      </div>
+      <div class="data-item">
+        <div class="dl">लागू दर</div>
+        <div class="dv" id="rRate">—</div>
+      </div>
+    </div>
+    <div class="formula-strip" id="rFormula">देय रक्कम = क्षेत्रफळ (चौ.मी.) × दर ÷ 1000</div>
+    <div id="mismatchNote" class="mismatch-note" style="display:none;"></div>
+    <div class="total-strip">
+      <div class="tl">देय एकवेळ प्रीमियम रक्कम</div>
+      <div class="amt"><span class="rs">रु.</span><span id="rAmount">0</span></div>
+    </div>
+    <p style="margin:0 28px 20px;font-size:0.8rem;color:#8b8a7c;font-style:italic;">ही माहिती केवळ माहितीच्या उद्देशाने आहे, कायदेशीर वापरासाठी नाही.</p>
+    <div class="actions-row">
+      <button class="btn btn-ghost" onclick="window.print()">प्रिंट / नोंद जतन करा</button>
+      <button class="btn btn-ghost" id="clearBtn">नवीन शोध</button>
+    </div>
+  </section>
+
+  <section class="panel" id="not-found">
+    <p>"<strong id="nfQuery"></strong>" साठी कोणतीही नोंद सापडली नाही. कृपया गावाचे नाव आणि सर्वे नंबर तपासा, किंवा नुकतीच नोंद झाली असल्यास कार्यालयाशी संपर्क साधा.</p>
+  </section>
+
+  <p style="font-size:0.82rem;color:#8b8a7c;margin-top:18px;">
+    एकूण नोंदी: <strong id="recordCount">0</strong> &middot; माहिती कार्यालयीन दर नोंदवही प्रमाणे.
+  </p>
+</main>
+
+<footer>
+  कार्यालयीन वापरासाठी. दर अद्ययावत करण्यासाठी किंवा नवीन गाव/सर्वे नंबर समाविष्ट करण्यासाठी, कृपया सुधारित दर नोंदवही द्यावी.
+</footer>
+
+<script>
+// ---- Embedded rate data (from office rate register) ----
+const RATE_DATA = [
+  {village:"Chanda Rai",           survey:"100/1",  area:120,  rate:5000, registerAmount:600},
+  {village:"Chanda Rai",           survey:"99/2",   area:160,  rate:3400, registerAmount:544},
+  {village:"Govindpur Rith",       survey:"51/3",   area:150,  rate:4500, registerAmount:675},
+  {village:"Bor Rith",             survey:"34/1/1", area:200,  rate:5600, registerAmount:1120},
+  {village:"Durgapur",             survey:"23",     area:300,  rate:7000, registerAmount:2100},
+  {village:"Wadgaon",              survey:"13/2",   area:5000, rate:8700, registerAmount:43500},
+  {village:"Devai Govindpur Rai",  survey:"34",     area:400,  rate:3400, registerAmount:1360},
+  {village:"Chanda Rai",           survey:"70/2",   area:100,  rate:3400, registerAmount:340},
+  {village:"Bor Rith",             survey:"34/1/2", area:500,  rate:5600, registerAmount:2800},
+  {village:"Bor Rith",             survey:"34/1/3", area:400,  rate:7000, registerAmount:2800},
+  {village:"Bor Rith",             survey:"34/1/4", area:20,   rate:8700, registerAmount:174},
+];
+
+const villageSelect = document.getElementById('villageSelect');
+const surveySelect = document.getElementById('surveySelect');
+const freeSearch = document.getElementById('freeSearch');
+const allEntries = document.getElementById('allEntries');
+const statusMsg = document.getElementById('status-msg');
+const resultEl = document.getElementById('result');
+const notFoundEl = document.getElementById('not-found');
+const recordCountEl = document.getElementById('recordCount');
+
+function computeAmount(area, rate){
+  return Math.round((area * rate / 1000) * 100) / 100;
+}
+
+function toMarathiDigits(str){
+  const map = {'0':'०','1':'१','2':'२','3':'३','4':'४','5':'५','6':'६','7':'७','8':'८','9':'९'};
+  return String(str).replace(/[0-9]/g, d => map[d]);
+}
+
+function init(){
+  recordCountEl.textContent = RATE_DATA.length;
+
+  const villages = [...new Set(RATE_DATA.map(r => r.village))].sort();
+  villages.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v; opt.textContent = v;
+    villageSelect.appendChild(opt);
+  });
+
+  RATE_DATA.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = `${r.survey} — ${r.village}`;
+    allEntries.appendChild(opt);
+  });
+}
+
+villageSelect.addEventListener('change', () => {
+  const v = villageSelect.value;
+  surveySelect.innerHTML = '';
+  if(!v){
+    surveySelect.disabled = true;
+    surveySelect.innerHTML = '<option value="">— आधी गाव निवडा —</option>';
+    return;
+  }
+  surveySelect.disabled = false;
+  const opt0 = document.createElement('option');
+  opt0.value = ''; opt0.textContent = '— सर्वे नं. निवडा —';
+  surveySelect.appendChild(opt0);
+
+  RATE_DATA.filter(r => r.village === v).forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.survey; opt.textContent = r.survey;
+    surveySelect.appendChild(opt);
+  });
+});
+
+surveySelect.addEventListener('change', () => {
+  if(villageSelect.value && surveySelect.value){
+    showRecord(villageSelect.value, surveySelect.value);
+  }
+});
+
+document.getElementById('searchBtn').addEventListener('click', () => {
+  const q = freeSearch.value.trim();
+  if(!q){
+    showStatus('कृपया सर्वे नंबर किंवा गावाचे नाव टाका.');
+    return;
+  }
+  let match = null;
+  const parts = q.split('—').map(s => s.trim());
+  if(parts.length === 2){
+    match = RATE_DATA.find(r => r.survey.toLowerCase() === parts[0].toLowerCase() &&
+                                 r.village.toLowerCase() === parts[1].toLowerCase());
+  }
+  if(!match){
+    const ql = q.toLowerCase();
+    const bySurvey = RATE_DATA.filter(r => r.survey.toLowerCase() === ql);
+    if(bySurvey.length === 1){
+      match = bySurvey[0];
+    } else if(bySurvey.length > 1){
+      showStatus('या सर्वे नंबरशी अनेक गावे जुळतात. कृपया वरील ड्रॉपडाऊन वापरून गाव निवडा.');
+      return;
+    } else {
+      const byVillage = RATE_DATA.filter(r => r.village.toLowerCase().includes(ql));
+      if(byVillage.length === 1){
+        match = byVillage[0];
+      }
+    }
+  }
+  if(match){
+    showRecord(match.village, match.survey);
+  } else {
+    showNotFound(q);
+  }
+});
+
+freeSearch.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    document.getElementById('searchBtn').click();
+  }
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  resultEl.style.display = 'none';
+  notFoundEl.style.display = 'none';
+  statusMsg.style.display = 'none';
+  villageSelect.value = '';
+  surveySelect.innerHTML = '<option value="">— आधी गाव निवडा —</option>';
+  surveySelect.disabled = true;
+  freeSearch.value = '';
+  freeSearch.focus();
+});
+
+function showStatus(msg){
+  statusMsg.textContent = msg;
+  statusMsg.style.display = 'block';
+  resultEl.style.display = 'none';
+  notFoundEl.style.display = 'none';
+}
+
+function showNotFound(q){
+  document.getElementById('nfQuery').textContent = q;
+  notFoundEl.style.display = 'block';
+  resultEl.style.display = 'none';
+  statusMsg.style.display = 'none';
+}
+
+function showRecord(village, survey){
+  const rec = RATE_DATA.find(r => r.village === village && r.survey === survey);
+  if(!rec){ showNotFound(`${survey} — ${village}`); return; }
+
+  statusMsg.style.display = 'none';
+  notFoundEl.style.display = 'none';
+
+  document.getElementById('rVillage').textContent = rec.village;
+  document.getElementById('rSurvey').textContent = rec.survey;
+  document.getElementById('rArea').textContent = `${rec.area} चौ.मी.`;
+  document.getElementById('rRate').textContent = `रु. ${rec.rate.toLocaleString('en-IN')}`;
+
+  const computed = computeAmount(rec.area, rec.rate);
+  document.getElementById('rAmount').textContent = computed.toLocaleString('en-IN');
+  document.getElementById('rFormula').textContent =
+    `देय रक्कम = ${rec.area} (क्षेत्रफळ) × ${rec.rate} (दर) ÷ 1000 = रु. ${computed.toLocaleString('en-IN')}`;
+
+  const mismatchNote = document.getElementById('mismatchNote');
+  if(rec.registerAmount !== undefined && Math.abs(rec.registerAmount - computed) > 0.01){
+    mismatchNote.style.display = 'block';
+    mismatchNote.textContent =
+      `टीप: दर नोंदवहीत या सर्वे नंबरसाठी रु. ${rec.registerAmount.toLocaleString('en-IN')} नमूद आहे, जे वरील गणित केलेल्या रकमेपेक्षा वेगळे आहे. ही रक्कम देण्यापूर्वी मूळ नोंदवहीशी पडताळणी करावी.`;
+  } else {
+    mismatchNote.style.display = 'none';
+  }
+
+  resultEl.style.display = 'block';
+  resultEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+init();
+</script>
+</body>
+</html>
